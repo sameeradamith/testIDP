@@ -1,0 +1,11 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ .Values.app.name }}-configmap
+  namespace: {{ .Release.Namespace }}
+data:
+  idpcontroller.pulsarurl: {{ .Values.env.pulsarurl }}
+  idpcontroller.scheduler.k8s.docker-registry: {{ .Values.image.repository }}
+  idpcontroller.storage.type: {{ .Values.env.storage }}
+  idpcontroller.scheduler.type: {{ .Values.env.scheduler }}
+  idpcontroller.storage.file-path: {{ .Values.persistence.path | quote }} 

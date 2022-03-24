@@ -1,0 +1,106 @@
+labels:
+  io.cattle.role: project # options are cluster/project
+categories:
+- zdmp
+- data
+- harmonisation
+- runtime
+- idp
+questions:
+- variable: image.repository
+  default: zdmp-gitlab.ascora.eu:8443/zdmp_code/developer-tier/t5.3-data-harmonization-designer
+  type: string
+  required: true
+  description: "ZDMP Image Repository for Component"
+  label: Image Repository
+  group: "Repository"
+# Secrets ----------------------------------------------------
+#- variable: privateRegistry.registryUrl
+#  label: Private registry URL
+#  description: "URL of private registry"
+#  group: "Private Registry Settings"
+#  type: string
+#  default: "zdmp-gitlab.ascora.eu:8443"
+#  required: true
+#- variable: privateRegistry.registryUser
+#  label: Private registry user
+#  description: "User used to authenticate to private registry"
+#  group: "Private Registry Settings"
+#  type: string
+#  default: ""
+#  required: true
+#- variable: privateRegistry.registryPasswd
+#  label: Private registry password
+#  description: "Password used to authenticate to private registry"
+#  group: "Private Registry Settings"
+#  type: password
+#  default: ""
+#  required: true
+#- variable: defaultSettings.registrySecret
+#  label: Private registry secret
+#  description: "The Kubernetes Secret name"
+#  group: "Private Registry Settings"
+#  type: string
+#  default: "zdmp-data-harmonisation-runtime-idp-cred"
+#  required: true
+
+- variable: service.type
+  default: "ClusterIP"
+  description: "Service Type"
+  type: enum
+  options:
+  - "ClusterIP"
+  - "NodePort"
+  required: true
+  label: Product Page Service Type
+  group: "Services and Load Balancing"
+- variable: ingress.enabled
+  default: true
+  type: boolean
+  required: true
+  description: Ingress Configuration
+  label: Ingress Configuration
+  group: "Services and Load Balancing"
+  show_subquestion_if: true
+  subquestions:
+    - variable: ingress.domain
+      default: platform.zdmp.eu
+      type: string
+      required: true
+      description: "Ingress Domain Name"
+      label: Ingress Domain Name
+- variable: env.frontend.controllerUrl
+  default: idpcontroller-zdmp.platform.zdmp.eu
+  type: string
+  required: true
+  description: "ZDMP Controller URL"
+  label: Controller URL
+  group: "Frontend"
+- variable: env.frontend.tenant
+  default: idp
+  type: string
+  required: true
+  description: "Tenant name"
+  label: Tenant Name
+  group: "Frontend" 
+- variable: env.frontend.authEnable
+  default: true
+  type: boolean
+  required: true
+  description: "Authentication enable or disable"
+  label: Authentication
+  group: "Frontend"
+  show_subquestion_if: true
+  subquestions:
+    - variable: env.frontend.portalUrl
+      default: portal-zdmp.platform.zdmp.eu
+      type: string
+      required: true
+      description: "ZDMP portal URL"
+      label: Portal URL
+    - variable: env.frontend.cookieName
+      default: ZDMP_Portal_session
+      type: string
+      required: true
+      description: "ZDMP portal cookie name"
+      label: Cookie Name

@@ -1,0 +1,10 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: idpruntime-configmap
+  namespace: {{ .Release.Namespace }}
+data:
+  idpruntime.base-path: "/opt/ice/idp/datapipelines" 
+  idpruntime.pulsar-url: {{ .Values.env.pulsarurl }}
+  idpruntime.auto-install-map: "true" 
+  idpruntime.reader: {{ .Values.env.runtime.reader }} 

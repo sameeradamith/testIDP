@@ -1,0 +1,54 @@
+##################################################################################################
+# UI App service
+##################################################################################################
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ .Values.frontendApp.name }}
+spec:
+  type: {{ .Values.frontendService.type }}
+  selector:
+    app: {{ .Values.frontendApp.name }}
+  ports:
+    - port: {{ .Values.frontendService.port }}
+      targetPort: {{ .Values.frontendApp.port }}
+{{- if eq .Values.frontendService.type "NodePort" }}
+      nodePort: {{ .Values.frontendService.nodeport }}
+{{- end }}
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Values.frontendApp.name }}
+  labels:
+    app: {{ .Values.frontendApp.name }}
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: {{ .Values.frontendApp.name }}
+  template:
+    metadata:
+      labels:
+        app: {{ .Values.frontendApp.name }}
+    spec:
+      containers:
+      - name: {{ .Values.frontendApp.name }}
+        image: {{ .Values.image.repository }}/{{ .Values.frontendImage.name }}:{{ .Values.frontendImage.version }}
+        imagePullPolicy: {{ .Values.frontendImage.pullPolicy }}
+        ports:
+        - containerPort: {{ .Values.frontendApp.port }}
+        env:
+        - name: AUTH_ENABLE
+          value: {{ .Values.env.frontend.authEnable | quote }}
+        - name: AUTH_API_URL
+          value: {{ .Values.env.frontend.portalUrl | quote }}
+        - name: CONTROLLER_URL
+          value: {{ .Values.env.frontend.controllerUrl | quote }}
+        - name: COOKIE_NAME
+          value: {{ .Values.env.frontend.cookieName | quote }}
+        - name: TENANT
+          value: {{ .Values.env.frontend.tenant | quote }}
+      imagePullSecrets:
+      - name: {{ .Values.frontendImage.secret }}
+---

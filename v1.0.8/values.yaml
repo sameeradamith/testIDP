@@ -1,0 +1,139 @@
+# Default values for chart.
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+
+# Secrets ----------------------------------------------------
+defaultSettings:
+#  registrySecret: "zdmp-data-harmonisation-runtime-idp-cred"
+  registrySecret: ""
+  zdmp: false 
+privateRegistry:
+  registryUrl: zdmp-gitlab.ascora.eu:8443
+  registryUser: ""
+  registryPasswd: ""
+
+replicaCount: 1
+
+image:
+  repository: zdmp-gitlab.ascora.eu:8443/zdmp_code/developer-tier/t5.3-data-harmonization-designer 
+  private: true 
+  secret: zdmp-cred
+  name: idpcontroller
+  version: v2.2
+  pullPolicy: Always
+  # Overrides the image tag whose default is the chart version.
+  #tag: ""
+
+app:
+  name: idpcontroller 
+  port: 8080 
+
+imagePullSecrets: []
+nameOverride: ""
+fullnameOverride: ""
+
+env:
+  pulsarurl: pulsar://localhost:6650
+  storage: File 
+  scheduler: Kubernetes
+  runtime:
+    reader: Controller
+  frontend:
+    authEnable: false
+    portalUrl: portal-zdmp.platform.zdmp.eu
+    controllerUrl: idpcontroller-zdmp.platform.zdmp.eu
+    cookieName: ZDMP_Portal_session
+    tenant: idp
+    
+
+serviceAccount:
+  # Specifies whether a service account should be created
+  create: false 
+  # Annotations to add to the service account
+  annotations: {}
+  # The name of the service account to use.
+  # If not set and create is true, a name is generated using the fullname template
+  name: ""
+
+podAnnotations: {}
+
+podSecurityContext: {}
+  # fsGroup: 2000
+
+securityContext: {}
+  # capabilities:
+  #   drop:
+  #   - ALL
+  # readOnlyRootFilesystem: true
+  # runAsNonRoot: true
+  # runAsUser: 1000
+
+service:
+  type: ClusterIP 
+  port: 8080 
+  nodeport: 30032
+
+## frontend
+frontendApp:
+  name: idpfrontend
+  port: 80
+
+frontendService:
+  type: ClusterIP
+  port: 80
+  nodeport: 30033
+
+frontendImage:
+  repository: zdmp-gitlab.ascora.eu:8443/zdmp_code/developer-tier/t5.3-data-harmonization-designer
+  private: true
+  secret: zdmp-cred
+  name: idpruntime-ui
+  version: v2.0.0
+  pullPolicy: Always
+##
+
+ingress:
+  enabled: true 
+  annotations: {}
+    # kubernetes.io/ingress.class: nginx
+    # kubernetes.io/tls-acme: "true"
+  hosts:
+    - host: chart-example.local
+      paths: []
+  tls: []
+  #  - secretName: chart-example-tls
+  #    hosts:
+  #      - chart-example.local
+  domain: platform.zdmp.eu
+
+persistence:
+  enabled: false 
+  storage: 1Gi
+  path: "/opt/ice/idp/datapipelines/runtimes"
+  accessmode: ReadWriteOnce
+  mountpath: "/opt/ice/idp/datapipelines/runtimes"
+
+resources: {}
+  # We usually recommend not to specify default resources and to leave this as a conscious
+  # choice for the user. This also increases chances charts run on environments with little
+  # resources, such as Minikube. If you do want to specify resources, uncomment the following
+  # lines, adjust them as necessary, and remove the curly braces after 'resources:'.
+  # limits:
+  #   cpu: 100m
+  #   memory: 128Mi
+  # requests:
+  #   cpu: 100m
+  #   memory: 128Mi
+
+autoscaling:
+  enabled: false
+  minReplicas: 1
+  maxReplicas: 100
+  targetCPUUtilizationPercentage: 80
+  # targetMemoryUtilizationPercentage: 80
+
+nodeSelector: {}
+
+tolerations: []
+
+affinity: {}
